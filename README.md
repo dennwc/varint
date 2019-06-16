@@ -1,6 +1,7 @@
 # varint
 
 This package provides an optimized implementation of protobuf's varint encoding/decoding.
+It has no dependencies.
 
 Benchmarks comparing to a `binary.Uvarint`:
 

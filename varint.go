@@ -58,6 +58,9 @@ func UvarintSize(x uint64) int {
 // 	        and -n is the number of bytes read
 //
 func Uvarint(buf []byte) (uint64, int) {
+	// Fully unrolled implementation of binary.Uvarint.
+	//
+	// It will also eliminate bound checks for buffers larger than 9 bytes.
 	sz := len(buf)
 	if sz == 0 {
 		return 0, 0
@@ -67,7 +70,7 @@ func Uvarint(buf []byte) (uint64, int) {
 		bit  = 1 << 7
 		mask = bit - 1
 	)
-	if sz >= 10 {
+	if sz >= 10 { // no bound checks
 		// i == 0
 		b := buf[0]
 		if b < bit {
