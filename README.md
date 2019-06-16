@@ -1,5 +1,7 @@
 # varint
 
+[![](https://godoc.org/github.com/dennwc/varint?status.svg)](http://godoc.org/github.com/dennwc/varint)
+
 This package provides an optimized implementation of protobuf's varint encoding/decoding.
 It has no dependencies.
 
