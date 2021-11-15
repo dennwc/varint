@@ -90,10 +90,10 @@ func TestUvarint(t *testing.T) {
 		b[1] = 0xff
 		n := binary.PutUvarint(b[2:], maxUint64)
 		p := b[:n+2]
-		if _, n2 := binary.Uvarint(p); n2 != -12 {
+		if _, n2 := binary.Uvarint(p); n2 != -11 {
 			t.Fatalf("unexpected error: %d", n2)
 		}
-		if _, n2 := Uvarint(p); n2 != -12 {
+		if _, n2 := Uvarint(p); n2 != -11 {
 			t.Fatalf("unexpected error: %d", n2)
 		}
 	})
@@ -104,10 +104,10 @@ func TestUvarint(t *testing.T) {
 		n := binary.PutUvarint(b[2:], maxUint64)
 		p := b[:n+2]
 		p[len(p)-1] = 0xff
-		if _, n2 := binary.Uvarint(p); n2 != 0 {
+		if _, n2 := binary.Uvarint(p); n2 != -11 {
 			t.Fatalf("unexpected error: %d", n2)
 		}
-		if _, n2 := Uvarint(p); n2 != 0 {
+		if _, n2 := Uvarint(p); n2 != -11 {
 			t.Fatalf("unexpected error: %d", n2)
 		}
 	})

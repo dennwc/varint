@@ -153,10 +153,11 @@ func Uvarint(buf []byte) (uint64, int) {
 		} else if sz == 10 {
 			return 0, 0
 		}
-		for j, b := range buf[10:] {
-			if b < bit {
-				return 0, -(11 + j)
-			}
+
+		if sz > MaxLen64 {
+			// Catch byte reads past MaxLen64.
+			// See issue https://golang.org/issues/41185
+			return 0, -(MaxLen64 + 1) // overflow
 		}
 		return 0, 0
 	}
@@ -261,10 +262,11 @@ func Uvarint(buf []byte) (uint64, int) {
 	} else if sz == 10 {
 		return 0, 0
 	}
-	for j, b := range buf[10:] {
-		if b < bit {
-			return 0, -(11 + j)
-		}
+
+	if sz > MaxLen64 {
+		// Catch byte reads past MaxLen64.
+		// See issue https://golang.org/issues/41185
+		return 0, -(MaxLen64 + 1) // overflow
 	}
 	return 0, 0
 }
