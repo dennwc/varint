@@ -7,32 +7,32 @@ import (
 	"testing"
 )
 
-func protoTag(buf []byte) (num int, typ byte, n int) {
+func protoTag(buf []byte) (num int64, typ byte, n int) {
 	var tag uint64
 	tag, n = Uvarint(buf)
 	if n == 0 || tag == 0 {
 		return 0, 0, 0
 	}
-	typ, num = byte(tag&0x07), int(tag>>3)
+	typ, num = byte(tag&0x07), int64(tag>>3)
 	if num <= 0 || typ > 5 {
 		return 0, 0, n
 	}
 	return
 }
 
-var casesProtoTag = []int{
-	int(MaxVal1 >> 3),
-	int(MaxVal2 >> 3),
-	int(MaxVal3 >> 3),
-	int(MaxVal4 >> 3),
-	int(MaxVal5 >> 3),
-	int(MaxVal6 >> 3),
-	int(MaxVal7 >> 3),
-	int(MaxVal8 >> 3),
-	int(MaxVal9 >> 3),
+var casesProtoTag = []int64{
+	int64(MaxVal1 >> 3),
+	int64(MaxVal2 >> 3),
+	int64(MaxVal3 >> 3),
+	int64(MaxVal4 >> 3),
+	int64(MaxVal5 >> 3),
+	int64(MaxVal6 >> 3),
+	int64(MaxVal7 >> 3),
+	int64(MaxVal8 >> 3),
+	int64(MaxVal9 >> 3),
 }
 
-func putProtoTag(b []byte, num int) int {
+func putProtoTag(b []byte, num int64) int {
 	// wire type 1, for test only
 	return binary.PutUvarint(b[:], uint64(num)<<3|1)
 }
@@ -123,7 +123,7 @@ func BenchmarkProtoTagSimple(b *testing.B) {
 
 			b.ResetTimer()
 			var (
-				num int
+				num int64
 				typ byte
 				n   int
 			)
@@ -144,7 +144,7 @@ func BenchmarkProtoTagSimple(b *testing.B) {
 
 			b.ResetTimer()
 			var (
-				num int
+				num int64
 				typ byte
 				n   int
 			)
@@ -165,7 +165,7 @@ func BenchmarkProtoTagSimple(b *testing.B) {
 
 		b.ResetTimer()
 		var (
-			num int
+			num int64
 			typ byte
 			n   int
 		)
@@ -190,7 +190,7 @@ func BenchmarkProtoTag(b *testing.B) {
 
 			b.ResetTimer()
 			var (
-				num int
+				num int64
 				typ byte
 				n   int
 			)
@@ -211,7 +211,7 @@ func BenchmarkProtoTag(b *testing.B) {
 
 			b.ResetTimer()
 			var (
-				num int
+				num int64
 				typ byte
 				n   int
 			)
@@ -232,7 +232,7 @@ func BenchmarkProtoTag(b *testing.B) {
 
 		b.ResetTimer()
 		var (
-			num int
+			num int64
 			typ byte
 			n   int
 		)
