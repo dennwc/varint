@@ -9,24 +9,24 @@ Benchmarks comparing to a `binary.Uvarint`:
 
 ```
 benchmark                      old ns/op     new ns/op     delta
-BenchmarkUvarint/1-8           4.13          2.85          -30.99%
-BenchmarkUvarint/1_large-8     4.01          2.28          -43.14%
-BenchmarkUvarint/2-8           6.23          2.87          -53.93%
-BenchmarkUvarint/2_large-8     5.60          2.86          -48.93%
-BenchmarkUvarint/3-8           6.55          3.44          -47.48%
-BenchmarkUvarint/3_large-8     6.54          2.86          -56.27%
-BenchmarkUvarint/4-8           7.30          3.71          -49.18%
-BenchmarkUvarint/4_large-8     7.46          3.10          -58.45%
-BenchmarkUvarint/5-8           8.31          4.12          -50.42%
-BenchmarkUvarint/5_large-8     8.56          3.48          -59.35%
-BenchmarkUvarint/6-8           9.42          4.66          -50.53%
-BenchmarkUvarint/6_large-8     9.91          4.07          -58.93%
-BenchmarkUvarint/7-8           10.6          5.28          -50.19%
-BenchmarkUvarint/7_large-8     11.0          4.70          -57.27%
-BenchmarkUvarint/8-8           11.7          6.02          -48.55%
-BenchmarkUvarint/8_large-8     12.1          5.19          -57.11%
-BenchmarkUvarint/9-8           12.9          6.83          -47.05%
-BenchmarkUvarint/9_large-8     13.1          5.71          -56.41%
+BenchmarkUvarint/1-8           3.46          2.64          -23.73%
+BenchmarkUvarint/1_large-8     3.48          2.31          -33.73%
+BenchmarkUvarint/2-8           5.51          3.20          -41.90%
+BenchmarkUvarint/2_large-8     5.45          2.32          -57.43%
+BenchmarkUvarint/3-8           7.18          3.46          -51.79%
+BenchmarkUvarint/3_large-8     7.00          3.04          -56.52%
+BenchmarkUvarint/4-8           8.04          3.54          -55.97%
+BenchmarkUvarint/4_large-8     8.34          3.19          -61.70%
+BenchmarkUvarint/5-8           9.58          4.03          -57.97%
+BenchmarkUvarint/5_large-8     9.77          3.75          -61.58%
+BenchmarkUvarint/6-8           10.9          4.34          -60.28%
+BenchmarkUvarint/6_large-8     10.9          4.31          -60.55%
+BenchmarkUvarint/7-8           12.3          4.63          -62.53%
+BenchmarkUvarint/7_large-8     12.4          5.05          -59.25%
+BenchmarkUvarint/8-8           13.8          5.48          -60.30%
+BenchmarkUvarint/8_large-8     14.1          4.89          -65.43%
+BenchmarkUvarint/9-8           15.3          5.65          -63.21%
+BenchmarkUvarint/9_large-8     15.3          5.47          -64.15%
 ```
 
 It also provides additional functionality like `UvarintSize` (similar to `sov*` in `gogo/protobuf`):
