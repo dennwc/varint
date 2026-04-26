@@ -111,6 +111,96 @@ func TestUvarint(t *testing.T) {
 			t.Fatalf("unexpected error: %d", n2)
 		}
 	})
+	t.Run("empty", func(t *testing.T) {
+		if _, n := Uvarint(nil); n != 0 {
+			t.Fatalf("expected 0, got %d", n)
+		}
+		if _, n := Uvarint([]byte{}); n != 0 {
+			t.Fatalf("expected 0, got %d", n)
+		}
+	})
+	t.Run("sz10_short", func(t *testing.T) {
+		buf := []byte{0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80}
+		if _, n := Uvarint(buf); n != 0 {
+			t.Fatalf("expected 0, got %d", n)
+		}
+	})
+	t.Run("short_all", func(t *testing.T) {
+		buf := []byte{0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80}
+		for i := 1; i <= 9; i++ {
+			if _, n := Uvarint(buf[:i]); n != 0 {
+				t.Fatalf("expected 0 for size %d, got %d", i, n)
+			}
+		}
+	})
+	t.Run("sz10_all", func(t *testing.T) {
+		for i := 1; i <= 10; i++ {
+			var buf [10]byte
+			for j := 0; j < i-1; j++ {
+				buf[j] = 0x80
+			}
+			buf[i-1] = 0x01
+			// This will have sz >= 10 (it is exactly 10)
+			// It should cover the unrolled loop in the `if sz >= 10` block
+			got, n := Uvarint(buf[:])
+			if n != i {
+				t.Fatalf("expected size %d, got %d", i, n)
+			}
+			if i < 10 && got != 1<<(7*uint(i-1)) {
+				t.Fatalf("expected value %d, got %d", 1<<(7*uint(i-1)), got)
+			}
+		}
+	})
+	t.Run("exhaustive", func(t *testing.T) {
+		for i := 1; i <= 10; i++ {
+			// value of length i
+			var v uint64
+			if i == 10 {
+				v = maxUint64
+			} else {
+				v = 1 << (7 * uint(i-1))
+			}
+			var buf [10]byte
+			n := binary.PutUvarint(buf[:], v)
+			if n != i {
+				t.Fatalf("expected size %d, got %d", i, n)
+			}
+
+			for sz := 0; sz <= 10; sz++ {
+				got, n2 := Uvarint(buf[:sz])
+				if sz < i {
+					if n2 != 0 {
+						t.Fatalf("v size %d, buf size %d: expected 0, got %d", i, sz, n2)
+					}
+				} else {
+					if n2 != i {
+						t.Fatalf("v size %d, buf size %d: expected %d, got %d", i, sz, i, n2)
+					}
+					if got != v {
+						t.Fatalf("v size %d, buf size %d: expected %v, got %v", i, sz, v, got)
+					}
+				}
+			}
+		}
+	})
+	t.Run("sz10_overflow", func(t *testing.T) {
+		buf := []byte{0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x02}
+		if _, n := Uvarint(buf); n != -10 {
+			t.Fatalf("expected -10, got %d", n)
+		}
+	})
+	t.Run("sz10_exactly_short", func(t *testing.T) {
+		buf := []byte{0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80}
+		if _, n := Uvarint(buf); n != 0 {
+			t.Fatalf("expected 0, got %d", n)
+		}
+	})
+	t.Run("sz12_overflow", func(t *testing.T) {
+		buf := []byte{0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80}
+		if _, n := Uvarint(buf); n != -11 {
+			t.Fatalf("expected -11, got %d", n)
+		}
+	})
 }
 
 func uvarintSizeLoop(x uint64) (n int) {

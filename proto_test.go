@@ -110,6 +110,65 @@ func TestProtoTag(t *testing.T) {
 			t.Fatalf("unexpected error: %d", n2)
 		}
 	})
+	t.Run("empty", func(t *testing.T) {
+		if _, _, n := ProtoTag(nil); n != 0 {
+			t.Fatalf("expected 0, got %d", n)
+		}
+	})
+	t.Run("invalid_wire", func(t *testing.T) {
+		if _, _, n := ProtoTag([]byte{0x06}); n != 0 { // type 6
+			t.Fatalf("expected 0, got %d", n)
+		}
+		if _, _, n := ProtoTag([]byte{0x86, 0x01}); n != 0 { // type 6, multi-byte
+			t.Fatalf("expected 0, got %d", n)
+		}
+	})
+	t.Run("zero_field", func(t *testing.T) {
+		if _, _, n := ProtoTag([]byte{0x00}); n != 0 {
+			t.Fatalf("expected 0, got %d", n)
+		}
+		if _, _, n := ProtoTag([]byte{0x01}); n != 0 { // field 0, type 1
+			t.Fatalf("expected 0, got %d", n)
+		}
+	})
+	t.Run("invalid_wire_all", func(t *testing.T) {
+		for typ := byte(6); typ <= 7; typ++ {
+			if _, _, n := ProtoTag([]byte{typ}); n != 0 {
+				t.Fatalf("expected 0 for type %d, got %d", typ, n)
+			}
+			if _, _, n := ProtoTag([]byte{0x80 | typ, 0x01}); n != 0 {
+				t.Fatalf("expected 0 for type %d (multi), got %d", typ, n)
+			}
+		}
+	})
+	t.Run("sz9_exactly_short", func(t *testing.T) {
+		buf := []byte{0x88, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80}
+		if _, _, n := ProtoTag(buf); n != 0 {
+			t.Fatalf("expected 0, got %d", n)
+		}
+	})
+	t.Run("sz9_all", func(t *testing.T) {
+		for i := 1; i <= 9; i++ {
+			var buf [9]byte
+			if i == 1 {
+				buf[0] = 0x08 // field 1, wire 0
+			} else {
+				buf[0] = 0x88 // field 1, wire 0, more bytes
+				for j := 1; j < i-1; j++ {
+					buf[j] = 0x80
+				}
+				buf[i-1] = 0x00 // terminator
+			}
+
+			got, typ, n := ProtoTag(buf[:])
+			if n != i {
+				t.Fatalf("expected size %d, got %d for step %d", i, n, i)
+			}
+			if got != 1 || typ != 0 {
+				t.Fatalf("expected field 1, typ 0; got %d, %d for step %d", got, typ, i)
+			}
+		}
+	})
 }
 
 func BenchmarkProtoTagSimple(b *testing.B) {
